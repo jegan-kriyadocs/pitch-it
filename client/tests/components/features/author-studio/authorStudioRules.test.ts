@@ -6,7 +6,7 @@ import {
   isStudioBusy,
   isStudioLocked,
   validateVideoFile,
-} from './authorStudioRules'
+} from '@/features/author-studio/authorStudioRules'
 
 function createFile(type: string, sizeBytes: number) {
   const file = new File(['x'], 'pitch.mp4', { type })
@@ -50,11 +50,16 @@ describe('getVideoWarnings', () => {
   })
 })
 
-describe('studio locks', () => {
-  it('locks while recording or uploading but only busy-locks before success', () => {
+describe('isStudioBusy and isStudioLocked', () => {
+  it('treats recording and uploading as busy', () => {
     expect(isStudioBusy('recording')).toBe(true)
-    expect(isStudioBusy('success')).toBe(false)
+    expect(isStudioBusy('uploading')).toBe(true)
+    expect(isStudioBusy('idle')).toBe(false)
+  })
+
+  it('locks controls while busy or submitted', () => {
+    expect(isStudioLocked('recording')).toBe(true)
     expect(isStudioLocked('success')).toBe(true)
-    expect(isStudioLocked('reviewing')).toBe(false)
+    expect(isStudioLocked('idle')).toBe(false)
   })
 })

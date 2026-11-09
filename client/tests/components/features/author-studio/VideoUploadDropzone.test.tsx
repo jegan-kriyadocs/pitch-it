@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 
-import { VideoUploadDropzone } from './VideoUploadDropzone'
+import { VideoUploadDropzone } from '@/features/author-studio/VideoUploadDropzone'
 
 describe('VideoUploadDropzone', () => {
   it('shows an error when a non-video file is dropped', async () => {
@@ -20,3 +20,4 @@ describe('VideoUploadDropzone', () => {
     expect(screen.getByRole('button', { name: /browse files/i })).toBeEnabled()
   })
 })
+

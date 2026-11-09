@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
-import { TRIAGE_SUBMISSIONS } from './editorTriageData'
-import { findActiveIndex, getPitchBadge, matchesFilter, matchesSearch } from './editorTriageRules'
+import { TRIAGE_SUBMISSIONS } from '@/features/editor-triage/editorTriageData'
+import { findActiveIndex, getPitchBadge, matchesFilter, matchesSearch } from '@/features/editor-triage/editorTriageRules'
 
 const [oncology, genetics, cardiology, immunology] = TRIAGE_SUBMISSIONS
 
@@ -36,3 +36,4 @@ describe('editorTriageRules', () => {
     expect(findActiveIndex(items, 90)).toBe(2)
   })
 })
+

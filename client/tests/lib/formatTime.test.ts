@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { formatClock, formatDurationLabel, formatFileSize } from './formatTime'
+import { formatClock, formatDurationLabel, formatFileSize } from '@/lib/formatTime'
 
 describe('formatTime', () => {
   it('formats a clock as mm:ss', () => {
@@ -17,3 +17,4 @@ describe('formatTime', () => {
     expect(formatFileSize(15 * 1024 * 1024)).toBe('15.0 MB')
   })
 })
+

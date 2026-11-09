@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { useCadmoreDirectUpload } from './useCadmoreDirectUpload'
+import { useCadmoreDirectUpload } from '@/hooks/useCadmoreDirectUpload'
 
 describe('useCadmoreDirectUpload', () => {
   beforeEach(() => {
@@ -40,3 +40,4 @@ describe('useCadmoreDirectUpload', () => {
     expect(result.current.progress).toBe(0)
   })
 })
+

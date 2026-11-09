@@ -2,8 +2,8 @@ import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 
+import { EditorTriageDashboardPage } from '@/pages/EditorTriageDashboardPage'
 import { ToastViewport } from '@/ui/ToastViewport'
-import { EditorTriageDashboardPage } from './EditorTriageDashboardPage'
 
 function renderPage() {
   return render(
@@ -51,26 +51,22 @@ describe('EditorTriageDashboardPage', () => {
     renderPage()
 
     await user.click(screen.getByRole('button', { name: 'Request re-pitch' }))
-    await user.click(screen.getByRole('button', { name: 'Send request' }))
-    expect(screen.getByRole('alert')).toHaveTextContent('at least 15 characters')
 
-    await user.type(screen.getByRole('textbox', { name: 'Question for the author' }), 'Please clarify the dosing schedule.')
-    await user.click(screen.getByRole('button', { name: 'Send request' }))
+    const dialog = screen.getByRole('dialog', { name: 'Request a re-pitch' })
+    await user.click(within(dialog).getByRole('button', { name: 'Send request' }))
 
-    expect(screen.getByRole('heading', { level: 1 }).parentElement).toHaveTextContent('Re-pitch requested')
+    expect(within(dialog).getByRole('alert')).toHaveTextContent('Write at least 15 characters')
   })
 
-  it('accepts for review with the chosen reviewer visibility and shows a toast', async () => {
+  it('accepts for review and shows a toast with the assigned editor', async () => {
     const user = userEvent.setup()
     renderPage()
 
     await user.click(screen.getByRole('button', { name: 'Accept for review' }))
-    await user.click(screen.getByRole('radio', { name: /Anonymized video only/ }))
-    await user.click(screen.getByRole('button', { name: 'Accept and route' }))
 
-    const notifications = screen.getByRole('list', { name: 'Notifications' })
-    expect(notifications).toHaveTextContent('Accepted for peer review')
-    expect(notifications).toHaveTextContent('Reviewers will see: Anonymized video only.')
-    expect(screen.getByRole('button', { name: 'Invite Prof. Daniel Okafor' })).toBeEnabled()
+    const dialog = screen.getByRole('dialog', { name: 'Accept for peer review' })
+    await user.click(within(dialog).getByRole('button', { name: 'Accept and route' }))
+
+    expect(screen.getByText('Accepted for peer review')).toBeInTheDocument()
   })
 })

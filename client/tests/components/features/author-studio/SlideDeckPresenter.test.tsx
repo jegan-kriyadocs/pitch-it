@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 
-import { SlideDeckPresenter } from './SlideDeckPresenter'
+import { SlideDeckPresenter } from '@/features/author-studio/SlideDeckPresenter'
 
 describe('SlideDeckPresenter', () => {
   it('moves between slides with the buttons', async () => {
@@ -29,3 +29,4 @@ describe('SlideDeckPresenter', () => {
     expect(screen.getByRole('status')).toHaveTextContent('Slide 2 of 4')
   })
 })
+

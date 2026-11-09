@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { useAuthorStudioStore } from './authorStudioStore'
+import { useAuthorStudioStore } from '@/features/author-studio/authorStudioStore'
 
 const getState = () => useAuthorStudioStore.getState()
 
@@ -40,3 +40,4 @@ describe('authorStudioStore', () => {
     expect(getState().recordingState).toBe('idle')
   })
 })
+

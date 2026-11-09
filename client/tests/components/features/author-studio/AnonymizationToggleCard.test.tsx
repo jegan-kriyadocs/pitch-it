@@ -2,8 +2,8 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 
-import { AnonymizationToggleCard } from './AnonymizationToggleCard'
-import { useAuthorStudioStore } from './authorStudioStore'
+import { AnonymizationToggleCard } from '@/features/author-studio/AnonymizationToggleCard'
+import { useAuthorStudioStore } from '@/features/author-studio/authorStudioStore'
 
 describe('AnonymizationToggleCard', () => {
   it('starts with both shields on and no warning', () => {
@@ -31,3 +31,4 @@ describe('AnonymizationToggleCard', () => {
     expect(screen.getByRole('switch', { name: 'Face silhouette mask' })).toBeDisabled()
   })
 })
+
