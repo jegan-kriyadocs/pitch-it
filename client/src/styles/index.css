@@ -1,0 +1,21 @@
+@import 'tailwindcss';
+@import './theme.css';
+
+@theme {
+  --animate-toast-in: toast-in 220ms ease-out;
+
+  @keyframes toast-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+}
+
+body {
+  @apply bg-page font-sans text-body antialiased;
+}
