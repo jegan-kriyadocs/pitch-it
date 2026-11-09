@@ -1,4 +1,4 @@
-import { useEffect, type RefObject } from 'react'
+import { useEffect, useState, type RefObject } from 'react'
 
 import { getSharedAudioContext } from '@/lib/audioContext'
 
@@ -14,7 +14,7 @@ function getElementSource(element: HTMLMediaElement) {
   return source
 }
 
-function connectDisguiseChain(audioContext: AudioContext, source: AudioNode) {
+function connectDisguiseChain(audioContext: AudioContext, source: AudioNode, output: AudioNode) {
   const lowShelf = new BiquadFilterNode(audioContext, { type: 'lowshelf', frequency: 260, gain: 7 })
   const highShelf = new BiquadFilterNode(audioContext, { type: 'highshelf', frequency: 2200, gain: -14 })
   const ringModulator = new GainNode(audioContext, { gain: 0 })
@@ -23,8 +23,8 @@ function connectDisguiseChain(audioContext: AudioContext, source: AudioNode) {
   const dryMix = new GainNode(audioContext, { gain: 0.45 })
 
   source.connect(lowShelf).connect(highShelf)
-  highShelf.connect(ringModulator).connect(wetMix).connect(audioContext.destination)
-  highShelf.connect(dryMix).connect(audioContext.destination)
+  highShelf.connect(ringModulator).connect(wetMix).connect(output)
+  highShelf.connect(dryMix).connect(output)
   carrier.connect(ringModulator.gain)
   carrier.start()
 
@@ -38,6 +38,8 @@ export function useVoiceModulation(
   mediaRef: RefObject<HTMLMediaElement | null>,
   isEnabled: boolean,
 ) {
+  const [analyser, setAnalyser] = useState<AnalyserNode | null>(null)
+
   useEffect(() => {
     const element = mediaRef.current
     if (!element) {
@@ -45,18 +47,24 @@ export function useVoiceModulation(
     }
     const audioContext = getSharedAudioContext()
     const source = getElementSource(element)
+    const outputAnalyser = new AnalyserNode(audioContext, { fftSize: 1024 })
+    outputAnalyser.connect(audioContext.destination)
     const resumeContext = () => void audioContext.resume().catch(() => undefined)
     element.addEventListener('play', resumeContext)
 
-    const disconnectChain = isEnabled ? connectDisguiseChain(audioContext, source) : null
+    const disconnectChain = isEnabled ? connectDisguiseChain(audioContext, source, outputAnalyser) : null
     if (!disconnectChain) {
-      source.connect(audioContext.destination)
+      source.connect(outputAnalyser)
     }
+    setAnalyser(outputAnalyser)
 
     return () => {
       element.removeEventListener('play', resumeContext)
       disconnectChain?.()
       source.disconnect()
+      outputAnalyser.disconnect()
     }
   }, [mediaRef, isEnabled])
+
+  return analyser
 }

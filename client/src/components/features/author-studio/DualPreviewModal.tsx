@@ -2,10 +2,10 @@ import { CircleCheck, CircleX, EyeOff, UserRound } from 'lucide-react'
 import { useState } from 'react'
 
 import type { AnonymizationConfig, PitchVideo } from '@/types/authorStudio'
+import { AnonymizedMediaPlayer } from '@/ui/AnonymizedMediaPlayer'
 import { Button } from '@/ui/Button'
 import { Dialog } from '@/ui/Dialog'
 import { SegmentedControl } from '@/ui/SegmentedControl'
-import { BlindedPreviewPlayer } from './BlindedPreviewPlayer'
 
 type PreviewTab = 'author' | 'reviewer'
 
@@ -60,7 +60,14 @@ export function DualPreviewModal({ pitchVideo, anonymization, onClose }: DualPre
           </div>
         ) : (
           <div className="flex flex-col gap-3">
-            <BlindedPreviewPlayer pitchVideo={pitchVideo} anonymization={anonymization} />
+            <AnonymizedMediaPlayer
+              url={pitchVideo.url}
+              durationSeconds={pitchVideo.durationSeconds}
+              kind="video"
+              isMaskEnabled={anonymization.visualMaskEnabled}
+              isVoiceDisguised={anonymization.voiceModulationEnabled}
+              label="Reviewer view of your pitch"
+            />
             <ul className="flex flex-col gap-1 text-[13px] sm:flex-row sm:gap-5">
               <ShieldCheckItem label="Face silhouette" isOn={anonymization.visualMaskEnabled} />
               <ShieldCheckItem label="Voice disguise" isOn={anonymization.voiceModulationEnabled} />

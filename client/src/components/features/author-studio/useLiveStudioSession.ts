@@ -36,6 +36,7 @@ export function useLiveStudioSession() {
   const recorder = useMediaRecorder(media.stream, {
     maxDurationSeconds: MANUSCRIPT_SESSION.maxDurationSeconds,
     onComplete: handleComplete,
+    shouldPersistChunks: true,
   })
   const countdown = useCountdown(COUNTDOWN_SECONDS, () => {
     recorder.start()

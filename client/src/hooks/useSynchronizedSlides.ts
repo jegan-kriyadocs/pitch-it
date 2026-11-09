@@ -1,14 +1,14 @@
-import { findActiveIndex } from '@/features/editor-triage/editorTriageRules'
-import type { PitchMedia } from '@/types/editorTriage'
+import { findActiveIndex } from '@/lib/timeline'
+import type { PitchTimeline } from '@/types/pitch'
 
-export function useSynchronizedSlides(pitch: PitchMedia, currentSeconds: number) {
-  const activeSlideIndex = Math.max(0, findActiveIndex(pitch.slides, currentSeconds))
-  const activeSegmentIndex = findActiveIndex(pitch.transcript, currentSeconds)
+export function useSynchronizedSlides(timeline: PitchTimeline, currentSeconds: number) {
+  const activeSlideIndex = Math.max(0, findActiveIndex(timeline.slides, currentSeconds))
+  const activeSegmentIndex = findActiveIndex(timeline.transcript, currentSeconds)
 
   return {
     activeSlideIndex,
-    activeSlide: pitch.slides[activeSlideIndex] ?? null,
+    activeSlide: timeline.slides[activeSlideIndex] ?? null,
     activeSegmentIndex,
-    activeCaption: pitch.transcript[activeSegmentIndex]?.text ?? '',
+    activeCaption: timeline.transcript[activeSegmentIndex]?.text ?? '',
   }
 }

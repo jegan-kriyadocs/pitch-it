@@ -13,7 +13,7 @@ export interface RadioCardOption<TValue extends string> {
 interface RadioCardGroupProps<TValue extends string> {
   legend: string
   options: readonly RadioCardOption<TValue>[]
-  value: TValue
+  value: TValue | null
   onChange: (value: TValue) => void
 }
 

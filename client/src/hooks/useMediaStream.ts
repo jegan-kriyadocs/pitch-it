@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react'
 
-import { createSimulatedMediaStream, type ManagedMediaStream } from '@/lib/simulatedMediaStream'
+import {
+  createSimulatedMediaStream,
+  isSimulatedStreamSupported,
+  type ManagedMediaStream,
+} from '@/lib/simulatedMediaStream'
 
-export type MediaStreamStatus = 'idle' | 'requesting' | 'live' | 'simulated'
+export type MediaStreamStatus = 'idle' | 'requesting' | 'live' | 'simulated' | 'unavailable'
 
 interface MediaStreamResult {
   stream: MediaStream | null
@@ -14,6 +18,7 @@ interface UseMediaStreamOptions {
   isEnabled: boolean
   cameraId: string
   microphoneId: string
+  includeVideo?: boolean
 }
 
 const IDLE_RESULT: MediaStreamResult = { stream: null, status: 'idle', fallbackReason: null }
@@ -28,13 +33,24 @@ function describeMediaError(error: unknown) {
   return 'Your camera or microphone is not available.'
 }
 
-async function acquireStream(cameraId: string, microphoneId: string) {
+function simulateOrGiveUp(includeVideo: boolean, fallbackReason: string) {
+  if (!isSimulatedStreamSupported(includeVideo)) {
+    return { managed: null, fallbackReason }
+  }
+  try {
+    return { managed: createSimulatedMediaStream({ includeVideo }), fallbackReason }
+  } catch {
+    return { managed: null, fallbackReason }
+  }
+}
+
+async function acquireStream(cameraId: string, microphoneId: string, includeVideo: boolean) {
   if (!navigator.mediaDevices?.getUserMedia) {
-    return { managed: createSimulatedMediaStream(), fallbackReason: 'This browser cannot use a camera.' }
+    return simulateOrGiveUp(includeVideo, 'This browser cannot use a camera.')
   }
   try {
     const stream = await navigator.mediaDevices.getUserMedia({
-      video: cameraId ? { deviceId: { exact: cameraId } } : { width: 1280, height: 720 },
+      video: includeVideo ? (cameraId ? { deviceId: { exact: cameraId } } : { width: 1280, height: 720 }) : false,
       audio: microphoneId ? { deviceId: { exact: microphoneId } } : true,
     })
     const managed: ManagedMediaStream = {
@@ -43,11 +59,11 @@ async function acquireStream(cameraId: string, microphoneId: string) {
     }
     return { managed, fallbackReason: null }
   } catch (error) {
-    return { managed: createSimulatedMediaStream(), fallbackReason: describeMediaError(error) }
+    return simulateOrGiveUp(includeVideo, describeMediaError(error))
   }
 }
 
-export function useMediaStream({ isEnabled, cameraId, microphoneId }: UseMediaStreamOptions) {
+export function useMediaStream({ isEnabled, cameraId, microphoneId, includeVideo = true }: UseMediaStreamOptions) {
   const [result, setResult] = useState<MediaStreamResult>(IDLE_RESULT)
 
   useEffect(() => {
@@ -59,9 +75,13 @@ export function useMediaStream({ isEnabled, cameraId, microphoneId }: UseMediaSt
     let acquired: ManagedMediaStream | null = null
     setResult({ stream: null, status: 'requesting', fallbackReason: null })
 
-    void acquireStream(cameraId, microphoneId).then(({ managed, fallbackReason }) => {
+    void acquireStream(cameraId, microphoneId, includeVideo).then(({ managed, fallbackReason }) => {
       if (!isActive) {
-        managed.stop()
+        managed?.stop()
+        return
+      }
+      if (!managed) {
+        setResult({ stream: null, status: 'unavailable', fallbackReason })
         return
       }
       acquired = managed
@@ -76,7 +96,7 @@ export function useMediaStream({ isEnabled, cameraId, microphoneId }: UseMediaSt
       isActive = false
       acquired?.stop()
     }
-  }, [isEnabled, cameraId, microphoneId])
+  }, [isEnabled, cameraId, microphoneId, includeVideo])
 
   return result
 }

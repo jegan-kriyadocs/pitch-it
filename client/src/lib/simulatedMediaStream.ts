@@ -21,6 +21,9 @@ function drawSimulatedFrame(context: CanvasRenderingContext2D, timeMs: number) {
 }
 
 function createSimulatedAudioTrack() {
+  if (typeof AudioContext === 'undefined') {
+    return { track: undefined, stop: () => undefined }
+  }
   const audioContext = getSharedAudioContext()
   const destination = audioContext.createMediaStreamDestination()
   const tone = audioContext.createOscillator()
@@ -48,7 +51,42 @@ function createSimulatedAudioTrack() {
   }
 }
 
-export function createSimulatedMediaStream(): ManagedMediaStream {
+interface SimulatedStreamOptions {
+  includeVideo?: boolean
+}
+
+function isUsableStream(stream: unknown): stream is MediaStream {
+  return (
+    stream instanceof MediaStream &&
+    typeof stream.getTracks === 'function' &&
+    typeof stream.addTrack === 'function'
+  )
+}
+
+export function isSimulatedStreamSupported(includeVideo: boolean) {
+  if (typeof MediaStream === 'undefined') {
+    return false
+  }
+  return !includeVideo || typeof HTMLCanvasElement.prototype.captureStream === 'function'
+}
+
+export function createSimulatedMediaStream({ includeVideo = true }: SimulatedStreamOptions = {}): ManagedMediaStream {
+  const audio = createSimulatedAudioTrack()
+  if (!includeVideo) {
+    const stream = new MediaStream(audio.track ? [audio.track] : [])
+    if (!isUsableStream(stream)) {
+      audio.stop()
+      throw new Error('MediaStream is not supported')
+    }
+    return {
+      stream,
+      stop: () => {
+        stream.getTracks().forEach((track) => track.stop())
+        audio.stop()
+      },
+    }
+  }
+
   const canvas = document.createElement('canvas')
   canvas.width = FRAME_WIDTH
   canvas.height = FRAME_HEIGHT
@@ -64,7 +102,11 @@ export function createSimulatedMediaStream(): ManagedMediaStream {
   frameId = requestAnimationFrame(renderLoop)
 
   const stream = canvas.captureStream(FRAME_RATE)
-  const audio = createSimulatedAudioTrack()
+  if (!isUsableStream(stream)) {
+    cancelAnimationFrame(frameId)
+    audio.stop()
+    throw new Error('Canvas capture is not supported')
+  }
   if (audio.track) {
     stream.addTrack(audio.track)
   }

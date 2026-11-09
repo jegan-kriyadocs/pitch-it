@@ -1,7 +1,5 @@
 import type { TriageSubmission } from '@/types/editorTriage'
 
-export const PLAYBACK_RATES = [0.75, 1, 1.25, 1.5, 2] as const
-
 export const DESK_REJECT_REASONS = [
   'Outside the journal’s scope',
   'Insufficient novelty over published work',

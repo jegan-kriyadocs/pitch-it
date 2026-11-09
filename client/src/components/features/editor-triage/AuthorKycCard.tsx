@@ -3,9 +3,9 @@ import { useState } from 'react'
 
 import type { IntegrityCheckStatus, RiskLevel, TriageSubmission } from '@/types/editorTriage'
 import { Badge } from '@/ui/Badge'
-import { Card } from '@/ui/Card'
 import { CheckboxField } from '@/ui/CheckboxField'
 import { ProgressBar } from '@/ui/ProgressBar'
+import { SectionCard } from '@/ui/SectionCard'
 import { getKycBadge } from './editorTriageRules'
 
 const CHECK_ICONS: Record<IntegrityCheckStatus, { icon: LucideIcon; className: string; label: string }> = {
@@ -35,15 +35,11 @@ export function AuthorKycCard({ submission }: AuthorKycCardProps) {
   ]
 
   return (
-    <Card className="flex flex-col gap-4 p-4">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 className="flex items-center gap-2 text-base font-semibold text-heading">
-          <Fingerprint size={17} aria-hidden className="text-brand-600" />
-          Author identity (KYC)
-        </h2>
-        <Badge variant={kycBadge.variant}>{kycBadge.label}</Badge>
-      </div>
-
+    <SectionCard
+      title="Author identity (KYC)"
+      icon={Fingerprint}
+      actions={<Badge variant={kycBadge.variant}>{kycBadge.label}</Badge>}
+    >
       <div className="flex flex-col gap-0.5">
         <span className="text-sm font-semibold text-heading">{author.displayName}</span>
         <span className="text-[13px] text-body">{author.affiliation}</span>
@@ -90,6 +86,6 @@ export function AuthorKycCard({ submission }: AuthorKycCardProps) {
         onChange={setIsPresenterConfirmed}
         className="rounded-base border border-border p-3"
       />
-    </Card>
+    </SectionCard>
   )
 }

@@ -4,7 +4,7 @@ import { showToast } from '@/lib/toastStore'
 import type { TriageSubmission } from '@/types/editorTriage'
 import { Badge } from '@/ui/Badge'
 import { Button } from '@/ui/Button'
-import { Card } from '@/ui/Card'
+import { SectionCard } from '@/ui/SectionCard'
 import { useEditorTriageStore } from './editorTriageStore'
 
 interface ReviewerMatcherCardProps {
@@ -25,18 +25,15 @@ export function ReviewerMatcherCard({ submission }: ReviewerMatcherCardProps) {
   }
 
   return (
-    <Card className="flex flex-col gap-3 p-4">
-      <div className="flex flex-col gap-0.5">
-        <h2 className="flex items-center gap-2 text-base font-semibold text-heading">
-          <Users size={17} aria-hidden className="text-brand-600" />
-          Suggested reviewers
-        </h2>
-        <p className="text-[13px] text-muted">
-          {canInvite
-            ? 'Matched to topics spoken in the pitch. Invite with one click.'
-            : 'Accept the manuscript for review to send invitations.'}
-        </p>
-      </div>
+    <SectionCard
+      title="Suggested reviewers"
+      icon={Users}
+      description={
+        canInvite
+          ? 'Matched to topics spoken in the pitch. Invite with one click.'
+          : 'Accept the manuscript for review to send invitations.'
+      }
+    >
       <ul className="flex flex-col gap-2">
         {submission.reviewers.map((reviewer) => {
           const isInvited = submission.invitedReviewerIds.includes(reviewer.id)
@@ -77,6 +74,6 @@ export function ReviewerMatcherCard({ submission }: ReviewerMatcherCardProps) {
           )
         })}
       </ul>
-    </Card>
+    </SectionCard>
   )
 }

@@ -4,7 +4,8 @@ import { clearRecording, saveRecordingChunk } from '@/lib/storage'
 
 const TIMESLICE_MS = 1000
 const TICK_MS = 200
-const PREFERRED_MIME_TYPES = ['video/webm;codecs=vp9,opus', 'video/webm', 'video/mp4']
+const VIDEO_MIME_TYPES = ['video/webm;codecs=vp9,opus', 'video/webm', 'video/mp4']
+const AUDIO_MIME_TYPES = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4']
 
 export type RecorderStatus = 'inactive' | 'recording' | 'paused'
 
@@ -16,16 +17,18 @@ export interface CompletedRecording {
 interface UseMediaRecorderOptions {
   maxDurationSeconds: number
   onComplete: (recording: CompletedRecording) => void
+  shouldPersistChunks?: boolean
 }
 
-function pickMimeType() {
-  return PREFERRED_MIME_TYPES.find((type) => MediaRecorder.isTypeSupported(type)) ?? ''
+function pickMimeType(stream: MediaStream) {
+  const candidates = stream.getVideoTracks().length > 0 ? VIDEO_MIME_TYPES : AUDIO_MIME_TYPES
+  return candidates.find((type) => MediaRecorder.isTypeSupported(type)) ?? ''
 }
 
 export const isMediaRecorderSupported = () => typeof MediaRecorder !== 'undefined'
 
 export function useMediaRecorder(stream: MediaStream | null, options: UseMediaRecorderOptions) {
-  const { maxDurationSeconds, onComplete } = options
+  const { maxDurationSeconds, onComplete, shouldPersistChunks = false } = options
   const [status, setStatus] = useState<RecorderStatus>('inactive')
   const [elapsedSeconds, setElapsedSeconds] = useState(0)
   const recorderRef = useRef<MediaRecorder | null>(null)
@@ -78,6 +81,9 @@ export function useMediaRecorder(stream: MediaStream | null, options: UseMediaRe
   }, [])
 
   function queueClearRecording() {
+    if (!shouldPersistChunks) {
+      return
+    }
     saveQueueRef.current = saveQueueRef.current.then(() => clearRecording())
   }
 
@@ -86,7 +92,7 @@ export function useMediaRecorder(stream: MediaStream | null, options: UseMediaRe
       return
     }
     queueClearRecording()
-    const mimeType = pickMimeType()
+    const mimeType = pickMimeType(stream)
     const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined)
     chunksRef.current = []
     elapsedMsRef.current = 0
@@ -97,6 +103,9 @@ export function useMediaRecorder(stream: MediaStream | null, options: UseMediaRe
         return
       }
       chunksRef.current.push(event.data)
+      if (!shouldPersistChunks) {
+        return
+      }
       const meta = { mimeType: recorder.mimeType, durationSeconds: elapsedMsRef.current / 1000 }
       saveQueueRef.current = saveQueueRef.current
         .then(() => saveRecordingChunk(event.data, meta))

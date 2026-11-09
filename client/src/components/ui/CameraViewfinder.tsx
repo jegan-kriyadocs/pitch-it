@@ -5,6 +5,7 @@ import { useCanvasMasking } from '@/hooks/useCanvasMasking'
 import type { MediaStreamStatus } from '@/hooks/useMediaStream'
 import type { RecorderStatus } from '@/hooks/useMediaRecorder'
 import { Badge } from '@/ui/Badge'
+import { CountdownOverlay } from '@/ui/CountdownOverlay'
 
 interface CameraViewfinderProps {
   stream: MediaStream | null
@@ -59,15 +60,7 @@ export function CameraViewfinder({
         </div>
       )}
 
-      {countdownSeconds !== null && countdownSeconds > 0 && (
-        <div
-          role="status"
-          aria-live="assertive"
-          className="absolute inset-0 flex items-center justify-center bg-gray-900/50 text-7xl font-bold text-white"
-        >
-          {countdownSeconds}
-        </div>
-      )}
+      <CountdownOverlay remainingSeconds={countdownSeconds} />
 
       <div className="absolute top-3 left-3 flex flex-wrap gap-2">
         {recorderStatus === 'recording' && (

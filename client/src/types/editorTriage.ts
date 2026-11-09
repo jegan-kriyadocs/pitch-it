@@ -1,3 +1,5 @@
+import type { PitchSlide, SummaryPoint, TranscriptSegment } from './pitch'
+
 export type PitchStatus = 'ready' | 'processing' | 'no_pitch'
 
 export type KycStatus = 'verified' | 'single_author_warning' | 'flagged'
@@ -11,23 +13,6 @@ export type DecisionAction = Exclude<TriageDecision, 'pending'>
 export type ReviewerVideoAccess = 'anonymized_stream_only' | 'full_video' | 'no_video'
 
 export type IntegrityCheckStatus = 'pass' | 'warn' | 'fail'
-
-export interface PitchSlide {
-  title: string
-  points: string[]
-  startSeconds: number
-}
-
-export interface TranscriptSegment {
-  startSeconds: number
-  endSeconds: number
-  text: string
-}
-
-export interface SummaryPoint {
-  label: string
-  startSeconds: number
-}
 
 export interface PitchMedia {
   pitchId: string

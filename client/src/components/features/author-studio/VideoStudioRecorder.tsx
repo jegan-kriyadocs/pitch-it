@@ -1,11 +1,11 @@
 import { isMediaRecorderSupported } from '@/hooks/useMediaRecorder'
 import { Alert } from '@/ui/Alert'
+import { CameraViewfinder } from '@/ui/CameraViewfinder'
 import { Card } from '@/ui/Card'
 import { ConfirmDialog } from '@/ui/ConfirmDialog'
-import { CameraViewfinder } from './CameraViewfinder'
+import { RecordingControls } from '@/ui/RecordingControls'
 import { DeviceSelectors } from './DeviceSelectors'
 import { RecordedPitchPlayback } from './RecordedPitchPlayback'
-import { RecordingControls } from './RecordingControls'
 import { TeleprompterOverlay } from './TeleprompterOverlay'
 import { MANUSCRIPT_SESSION, WARNING_THRESHOLD_SECONDS } from './authorStudioData'
 import { useAuthorStudioStore } from './authorStudioStore'
@@ -22,11 +22,14 @@ export function VideoStudioRecorder() {
         {!isMediaRecorderSupported() && (
           <Alert variant="error">This browser can't record video. Use Upload video instead.</Alert>
         )}
-        {media.fallbackReason && (
+        {media.status === 'simulated' && (
           <Alert variant="info">
             {media.fallbackReason} You're using a simulated camera, so you can still try every
             feature.
           </Alert>
+        )}
+        {media.status === 'unavailable' && (
+          <Alert variant="error">{media.fallbackReason} Use Upload video instead.</Alert>
         )}
 
         {recordedVideo ? (

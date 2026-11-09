@@ -76,16 +76,6 @@ export function matchesSearch(submission: TriageSubmission, query: string) {
     .includes(normalizedQuery)
 }
 
-export function findActiveIndex(items: readonly { startSeconds: number }[], currentSeconds: number) {
-  let activeIndex = -1
-  items.forEach((item, index) => {
-    if (item.startSeconds <= currentSeconds) {
-      activeIndex = index
-    }
-  })
-  return activeIndex
-}
-
 const DATE_FORMATTER = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 
 export function formatSubmittedDate(isoDate: string) {

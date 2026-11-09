@@ -1,8 +1,8 @@
 import { Sparkles } from 'lucide-react'
 
 import { formatClock } from '@/lib/formatTime'
-import type { SummaryPoint } from '@/types/editorTriage'
-import { Card } from '@/ui/Card'
+import type { SummaryPoint } from '@/types/pitch'
+import { SectionCard } from '@/ui/SectionCard'
 
 interface PitchSummaryCardProps {
   summary: SummaryPoint[]
@@ -15,14 +15,7 @@ export function PitchSummaryCard({ summary, onSeek }: PitchSummaryCardProps) {
   }
 
   return (
-    <Card className="flex flex-col gap-3 p-4">
-      <div className="flex flex-col gap-0.5">
-        <h2 className="flex items-center gap-2 text-base font-semibold text-heading">
-          <Sparkles size={17} aria-hidden className="text-brand-600" />
-          30-second AI summary
-        </h2>
-        <p className="text-[13px] text-muted">Jump straight to the key moments of the pitch.</p>
-      </div>
+    <SectionCard title="30-second AI summary" icon={Sparkles} description="Jump straight to the key moments of the pitch.">
       <ul className="flex flex-col gap-1">
         {summary.map((point) => (
           <li key={point.startSeconds}>
@@ -39,6 +32,6 @@ export function PitchSummaryCard({ summary, onSeek }: PitchSummaryCardProps) {
           </li>
         ))}
       </ul>
-    </Card>
+    </SectionCard>
   )
 }

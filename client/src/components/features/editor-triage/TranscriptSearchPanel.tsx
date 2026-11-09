@@ -3,9 +3,9 @@ import { useState } from 'react'
 
 import { cn } from '@/lib/cn'
 import { formatClock } from '@/lib/formatTime'
-import type { TranscriptSegment } from '@/types/editorTriage'
-import { Card } from '@/ui/Card'
+import type { TranscriptSegment } from '@/types/pitch'
 import { SearchField } from '@/ui/SearchField'
+import { SectionCard } from '@/ui/SectionCard'
 
 interface TranscriptSearchPanelProps {
   transcript: TranscriptSegment[]
@@ -41,12 +41,10 @@ export function TranscriptSearchPanel({ transcript, activeSegmentIndex, onSeek }
     .filter(({ segment }) => !trimmedQuery || segment.text.toLowerCase().includes(trimmedQuery.toLowerCase()))
 
   return (
-    <Card className="flex flex-col gap-3 p-4">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 className="flex items-center gap-2 text-base font-semibold text-heading">
-          <FileText size={17} aria-hidden className="text-brand-600" />
-          Transcript
-        </h2>
+    <SectionCard
+      title="Transcript"
+      icon={FileText}
+      actions={
         <SearchField
           label="Search transcript"
           placeholder="Search keywords"
@@ -54,7 +52,8 @@ export function TranscriptSearchPanel({ transcript, activeSegmentIndex, onSeek }
           onChange={(event) => setQuery(event.target.value)}
           className="w-full sm:w-60"
         />
-      </div>
+      }
+    >
       {trimmedQuery && (
         <p role="status" className="text-[13px] text-muted">
           {visibleSegments.length} {visibleSegments.length === 1 ? 'match' : 'matches'} for “{trimmedQuery}”
@@ -82,6 +81,6 @@ export function TranscriptSearchPanel({ transcript, activeSegmentIndex, onSeek }
           </li>
         ))}
       </ol>
-    </Card>
+    </SectionCard>
   )
 }

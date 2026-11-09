@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
 import { TRIAGE_SUBMISSIONS } from '@/features/editor-triage/editorTriageData'
-import { findActiveIndex, getPitchBadge, matchesFilter, matchesSearch } from '@/features/editor-triage/editorTriageRules'
+import { getPitchBadge, matchesFilter, matchesSearch } from '@/features/editor-triage/editorTriageRules'
+import { findActiveIndex } from '@/lib/timeline'
 
 const [oncology, genetics, cardiology, immunology] = TRIAGE_SUBMISSIONS
 

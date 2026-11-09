@@ -1,6 +1,6 @@
 import { cn } from '@/lib/cn'
 import { formatClock } from '@/lib/formatTime'
-import type { PitchSlide } from '@/types/editorTriage'
+import type { PitchSlide } from '@/types/pitch'
 import { Card } from '@/ui/Card'
 import { SlideCanvas } from '@/ui/SlideCanvas'
 
