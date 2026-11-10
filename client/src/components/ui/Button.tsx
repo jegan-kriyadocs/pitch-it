@@ -3,7 +3,7 @@ import type { ComponentProps } from 'react'
 
 import { cn } from '@/lib/cn'
 
-type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger'
+type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'link'
 type ButtonSize = 'sm' | 'md' | 'lg'
 
 interface ButtonProps extends ComponentProps<'button'> {
@@ -17,6 +17,7 @@ const VARIANT_CLASSES: Record<ButtonVariant, string> = {
   secondary: 'border-border bg-white text-heading-secondary hover:bg-gray-50',
   ghost: 'border-transparent bg-transparent text-heading-secondary hover:bg-gray-100',
   danger: 'border-transparent bg-red-600 text-white hover:bg-red-700',
+  link: 'h-auto border-transparent bg-transparent p-0 font-medium text-brand-600 underline-offset-2 hover:text-brand-700 hover:underline',
 }
 
 const SIZE_CLASSES: Record<ButtonSize, string> = {
@@ -42,7 +43,7 @@ export function Button({
     <button
       type={type}
       disabled={disabled || isLoading}
-      className={cn(BASE_CLASSES, VARIANT_CLASSES[variant], SIZE_CLASSES[size], className)}
+      className={cn(BASE_CLASSES, VARIANT_CLASSES[variant], variant !== 'link' && SIZE_CLASSES[size], className)}
       {...buttonProps}
     >
       {isLoading && <LoaderCircle aria-hidden className="motion-safe:animate-spin" />}

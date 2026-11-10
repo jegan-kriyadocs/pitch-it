@@ -28,7 +28,7 @@ export function TemplateSelector({ isLocked }: TemplateSelectorProps) {
         onChange={(event) => setTemplate(event.target.value as TemplateId)}
         className="sm:flex-1"
       />
-      <Button
+      {/* <Button
         variant={isScriptGenerated ? 'secondary' : 'primary'}
         onClick={generateScript}
         isLoading={isGenerating}
@@ -45,7 +45,7 @@ export function TemplateSelector({ isLocked }: TemplateSelectorProps) {
           : isScriptGenerated
             ? 'Script ready'
             : 'Generate pitch script with AI'}
-      </Button>
+      </Button> */}
     </div>
   )
 }

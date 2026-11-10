@@ -1,6 +1,5 @@
 import { Outlet } from 'react-router-dom'
 
-import { ToastViewport } from '@/ui/ToastViewport'
 import { AppHeader } from './AppHeader'
 import { SideNav } from './SideNav'
 
@@ -19,7 +18,6 @@ export function AppLayout() {
           </div>
         </main>
       </div>
-      <ToastViewport />
     </div>
   )
 }

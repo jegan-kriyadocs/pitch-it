@@ -11,7 +11,7 @@ export interface SegmentOption<TValue extends string> {
 interface SegmentedControlProps<TValue extends string> {
   label: string
   options: readonly SegmentOption<TValue>[]
-  value: TValue
+  value: TValue | null
   isDisabled?: boolean
   onChange: (value: TValue) => void
 }
